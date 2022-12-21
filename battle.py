@@ -1,4 +1,12 @@
+from dataclasses import dataclass
+
 import pandas as pd
+
+
+@dataclass
+class AtkMethod:
+    atk_value: int
+    def_category: str
 
 
 def get_data_pokemon():
@@ -11,9 +19,9 @@ def get_data_pokemon():
 
 def determine_atk_method(pokemon):
     if pokemon['Attack'] > pokemon['Sp. Atk']:
-        atk_method = (pokemon['Attack'], 'Defense') # 1: atk value, 2: def or sp.def for receive
+        atk_method = AtkMethod(pokemon['Attack'], 'Defense')
     elif pokemon['Attack'] <= pokemon['Sp. Atk']: # sp.atk has priority over atk
-        atk_method = (pokemon['Sp. Atk'], 'Sp. Def') # 1: atk value, 2: def or sp.def for receive
+        atk_method = AtkMethod(pokemon['Sp. Atk'], 'Sp. Def')
     return atk_method
 
 
