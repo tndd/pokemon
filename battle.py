@@ -25,6 +25,14 @@ def determine_atk_method(pokemon):
     return atk_method
 
 
+def calc_damage(atk_method, pokemon_def):
+    base_move_damage = 120
+    pokemon_def_value = pokemon_def[atk_method.def_category]
+    move_damage = base_move_damage * atk_method.value // pokemon_def_value
+    damage = ((22 * move_damage) // 50) + 2
+    return damage
+
+
 def main():
     d_pokemon = get_data_pokemon()
     print(d_pokemon)
