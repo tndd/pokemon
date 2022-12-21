@@ -25,6 +25,14 @@ def determine_atk_method(pokemon):
     return atk_method
 
 
+def attack_efficiency(type_atk, pokemon_def):
+    data_type = pd.read_csv('type.csv', index_col=0)
+    effect = data_type.loc[type_atk][pokemon_def['Type1']]
+    if not pd.isnull(pokemon_def['Type2']):
+        effect *= data_type.loc[type_atk][pokemon_def['Type2']]
+    return effect
+
+
 def calc_damage(atk_method, pokemon_def):
     base_move_damage = 120
     pokemon_def_value = pokemon_def[atk_method.def_category]
