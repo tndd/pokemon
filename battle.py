@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from math import ceil
 
 import pandas as pd
 
@@ -48,6 +49,12 @@ def calc_damage_best(pokemon_atk, pokemon_def):
     if not pd.isnull(pokemon_atk['Type2']):
         dmg_best = max(dmg_best, calc_damage(atk_method, pokemon_atk['Type2'], pokemon_def))
     return dmg_best
+
+
+def calc_beat_num(pokemon_atk, pokemon_def):
+    dmg = calc_damage_best(pokemon_atk, pokemon_def)
+    n = ceil(pokemon_def['HP'] / dmg)
+    return n
 
 
 def main():
