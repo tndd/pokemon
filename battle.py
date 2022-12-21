@@ -33,12 +33,13 @@ def attack_efficiency(type_atk, pokemon_def):
     return effect
 
 
-def calc_damage(atk_method, pokemon_def):
-    base_move_damage = 120
+def calc_damage(atk_method, atk_type, pokemon_def):
+    move_dmg = 120
     pokemon_def_value = pokemon_def[atk_method.def_category]
-    move_damage = base_move_damage * atk_method.value // pokemon_def_value
-    damage = ((22 * move_damage) // 50) + 2
-    return damage
+    base_dmg = move_dmg * atk_method.value // pokemon_def_value
+    damage = ((22 * base_dmg) // 50) + 2
+    efficiency = attack_efficiency(atk_type, pokemon_def)
+    return int(damage * efficiency)
 
 
 def main():
