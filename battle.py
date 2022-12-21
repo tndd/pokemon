@@ -5,7 +5,7 @@ import pandas as pd
 
 @dataclass
 class AtkMethod:
-    atk_value: int
+    value: int
     def_category: str
 
 
