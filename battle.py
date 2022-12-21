@@ -9,6 +9,14 @@ def get_data_pokemon():
     return d_pokemon.set_index('unique_name')
 
 
+def determine_atk_method(pokemon):
+    if pokemon['Attack'] > pokemon['Sp. Atk']:
+        atk_method = (pokemon['Attack'], 'Defense') # 1: atk value, 2: def or sp.def for receive
+    elif pokemon['Attack'] <= pokemon['Sp. Atk']: # sp.atk has priority over atk
+        atk_method = (pokemon['Sp. Atk'], 'Sp. Def') # 1: atk value, 2: def or sp.def for receive
+    return atk_method
+
+
 def main():
     d_pokemon = get_data_pokemon()
     print(d_pokemon)
