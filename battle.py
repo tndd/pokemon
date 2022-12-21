@@ -42,6 +42,14 @@ def calc_damage(atk_method, atk_type, pokemon_def):
     return int(damage * efficiency)
 
 
+def calc_damage_best(pokemon_atk, pokemon_def):
+    atk_method = determine_atk_method(pokemon_atk)
+    dmg_best = calc_damage(atk_method, pokemon_atk['Type1'], pokemon_def)
+    if not pd.isnull(pokemon_atk['Type2']):
+        dmg_best = max(dmg_best, calc_damage(atk_method, pokemon_atk['Type2'], pokemon_def))
+    return dmg_best
+
+
 def main():
     d_pokemon = get_data_pokemon()
     print(d_pokemon)
