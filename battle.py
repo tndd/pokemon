@@ -64,12 +64,14 @@ def calc_damage_best(pokemon_atk, pokemon_def):
 
 def calc_beat_num(pokemon_atk, pokemon_def):
     dmg = calc_damage_best(pokemon_atk, pokemon_def)
-    n = ceil((pokemon_def['HP'] + 60) / dmg)
+    pokemon_def_hp = pokemon_def['HP'] + 60
+    n = ceil(pokemon_def_hp / dmg)
+    print(f" {pokemon_atk.name} (AtkDmg: {dmg}, Spd: {pokemon_atk['Speed']}) | {pokemon_def.name} (HP : {pokemon_def_hp})")
     return n
 
 
 def battle(pokemon_me, pokemon_enemy):
-    print(f"Me: {pokemon_me['unique_name']}, Enemy: {pokemon_enemy['unique_name']}')")
+    print(f"### Battle ### : {pokemon_me.name} => {pokemon_enemy.name}")
     beat_num_me = calc_beat_num(pokemon_me, pokemon_enemy)
     beat_num_enemy = calc_beat_num(pokemon_enemy, pokemon_me)
     # win = 1, lose = -1, draw = 0
@@ -88,11 +90,9 @@ def battle(pokemon_me, pokemon_enemy):
 
 def main():
     d_pokemon = get_data_pokemon()
-    miraidon = d_pokemon.loc['Miraidon']
     garchomp = d_pokemon.loc['Garchomp']
     mimikyu = d_pokemon.loc['Mimikyu']
-    print(calc_damage_best(garchomp, mimikyu))
-    print(calc_beat_num(garchomp, mimikyu))
+    print(battle(garchomp, mimikyu))
 
 
 if __name__ == '__main__':
