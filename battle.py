@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from math import ceil
+from math import floor, ceil
 
 import pandas as pd
 
@@ -34,10 +34,21 @@ def attack_efficiency(type_atk, pokemon_def):
     return effect
 
 
-def calc_damage(atk_method, atk_type, pokemon_def):
-    move_dmg = 120
-    pokemon_def_value = pokemon_def[atk_method.def_category]
-    base_dmg = move_dmg * atk_method.value // pokemon_def_value
+def calc_damage(
+        atk_method,
+        atk_type,
+        pokemon_def,
+        move_dmg = 120,
+        base_stats_atk = 0,
+        base_stats_def = 0,
+        effort_value_atk = 0,
+        effort_value_def = 0,
+        nature_atk = 1,
+        nature_def = 1
+    ):
+    pokemon_atk_value = floor((atk_method.value + (base_stats_atk // 2) + (effort_value_atk // 8) + 5) * nature_atk)
+    pokemon_def_value = floor((pokemon_def[atk_method.def_category] + (base_stats_def // 2) + (effort_value_def // 8) + 5) * nature_def)
+    base_dmg = move_dmg * pokemon_atk_value // pokemon_def_value
     damage = ((22 * base_dmg) // 50) + 2
     efficiency = attack_efficiency(atk_type, pokemon_def)
     return int(damage * efficiency)
