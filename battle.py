@@ -53,13 +53,17 @@ def calc_damage_best(pokemon_atk, pokemon_def):
 
 def calc_beat_num(pokemon_atk, pokemon_def):
     dmg = calc_damage_best(pokemon_atk, pokemon_def)
-    n = ceil(pokemon_def['HP'] / dmg)
+    n = ceil((pokemon_def['HP'] + 60) / dmg)
     return n
 
 
 def main():
     d_pokemon = get_data_pokemon()
-    print(d_pokemon)
+    miraidon = d_pokemon.loc['Miraidon']
+    garchomp = d_pokemon.loc['Garchomp']
+    mimikyu = d_pokemon.loc['Mimikyu']
+    print(calc_damage_best(garchomp, mimikyu))
+    print(calc_beat_num(garchomp, mimikyu))
 
 
 if __name__ == '__main__':
