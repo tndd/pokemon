@@ -60,6 +60,9 @@ def calc_damage_best(pokemon_atk, pokemon_def):
     dmg_best = calc_damage(atk_method, pokemon_atk['Type1'], pokemon_def)
     if not pd.isnull(pokemon_atk['Type2']):
         dmg_best = max(dmg_best, calc_damage(atk_method, pokemon_atk['Type2'], pokemon_def))
+    if dmg_best == 0:
+        # case of zero damage
+        dmg_best = 0.1
     return dmg_best
 
 
