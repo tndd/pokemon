@@ -68,6 +68,24 @@ def calc_beat_num(pokemon_atk, pokemon_def):
     return n
 
 
+def battle(pokemon_me, pokemon_enemy):
+    print(f"Me: {pokemon_me['unique_name']}, Enemy: {pokemon_enemy['unique_name']}')")
+    beat_num_me = calc_beat_num(pokemon_me, pokemon_enemy)
+    beat_num_enemy = calc_beat_num(pokemon_enemy, pokemon_me)
+    # win = 1, lose = -1, draw = 0
+    if beat_num_me < beat_num_enemy:
+        return 1
+    elif beat_num_me > beat_num_enemy:
+        return -1
+    else:
+        if pokemon_me['Speed'] > pokemon_enemy['Speed']:
+            return 1
+        elif pokemon_me['Speed'] < pokemon_enemy['Speed']:
+            return -1
+        else:
+            return 0
+
+
 def main():
     d_pokemon = get_data_pokemon()
     miraidon = d_pokemon.loc['Miraidon']
