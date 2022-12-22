@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from math import floor, ceil
+from itertools import permutations
 
 import pandas as pd
 
@@ -90,9 +91,8 @@ def battle(pokemon_me, pokemon_enemy):
 
 def main():
     d_pokemon = get_data_pokemon()
-    garchomp = d_pokemon.loc['Garchomp']
-    mimikyu = d_pokemon.loc['Mimikyu']
-    print(battle(garchomp, mimikyu))
+    for poke_a, poke_b in permutations(list(d_pokemon.index), 2):
+        print(battle(d_pokemon.loc[poke_a], d_pokemon.loc[poke_b]))
 
 
 if __name__ == '__main__':
