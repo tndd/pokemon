@@ -1,6 +1,8 @@
+import yaml
 from dataclasses import dataclass
 from math import floor, ceil
 from itertools import permutations
+from collections import defaultdict
 
 import pandas as pd
 
@@ -94,8 +96,29 @@ def battle(pokemon_me, pokemon_enemy):
 
 def main():
     d_pokemon = get_data_pokemon()
+    battle_results = defaultdict(
+        lambda: {
+            'win': defaultdict(float),  # received damage until win
+            'lose': defaultdict(float), # inflict damage until lose
+            'draw': []
+        }
+    )
     for poke_a, poke_b in permutations(list(d_pokemon.index), 2):
-        print(battle(d_pokemon.loc[poke_a], d_pokemon.loc[poke_b]))
+        r = battle(d_pokemon.loc[poke_a], d_pokemon.loc[poke_b])
+        if r == 1:
+            battle_results[poke_a]['win'][poke_b] = 1.0
+            battle_results[poke_b]['lose'][poke_a] = 1.0
+        elif r == -1:
+            battle_results[poke_b]['win'][poke_a] = 1.0
+            battle_results[poke_a]['lose'][poke_b] = 1.0
+        else:
+            battle_results[poke_b]['draw'].append(poke_a)
+            battle_results[poke_a]['draw'].append(poke_b)
+        print(r)
+        break
+    with open('battle_results.yml', 'w') as f:
+        import json
+        json.dump(dict(battle_results), f)
 
 
 if __name__ == '__main__':
