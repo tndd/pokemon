@@ -96,39 +96,39 @@ def battle_report(pokemon_alfa, pokemon_bravo):
     if spd_offset_based_on_alfa < 0:
         # alfa is faster than bravo
         if beat_num_alfa <= beat_num_bravo:
-            win_pokemon = pokemon_alfa.Name
+            win_pokemon = pokemon_alfa.name
             act_num_lose_pokemon = beat_num_alfa - 1
             winner_remain_hp = 1 - dmg_from_bravo_to_alfa * act_num_lose_pokemon
         elif beat_num_alfa > beat_num_bravo:
-            win_pokemon = pokemon_bravo.Name
+            win_pokemon = pokemon_bravo.name
             act_num_lose_pokemon = beat_num_bravo
             winner_remain_hp = 1 - dmg_from_alfa_to_bravo * act_num_lose_pokemon
     elif spd_offset_based_on_alfa > 0:
         # bravo is faster than alfa
         if beat_num_bravo <= beat_num_alfa:
-            win_pokemon = pokemon_bravo.Name
+            win_pokemon = pokemon_bravo.name
             act_num_lose_pokemon = beat_num_bravo - 1
             winner_remain_hp = 1 - dmg_from_alfa_to_bravo * act_num_lose_pokemon
         elif beat_num_bravo > beat_num_alfa:
-            win_pokemon = pokemon_alfa.Name
+            win_pokemon = pokemon_alfa.name
             act_num_lose_pokemon = beat_num_alfa
             winner_remain_hp = 1 - dmg_from_bravo_to_alfa * act_num_lose_pokemon
     else:
         # speed of alfa & bravo is equal
         if beat_num_alfa < beat_num_bravo:
-            win_pokemon = pokemon_alfa.Name
+            win_pokemon = pokemon_alfa.name
             act_num_lose_pokemon = beat_num_alfa - 0.5
             winner_remain_hp = dmg_from_bravo_to_alfa * act_num_lose_pokemon
         elif beat_num_alfa > beat_num_bravo:
-            win_pokemon = pokemon_bravo.Name
+            win_pokemon = pokemon_bravo.name
             act_num_lose_pokemon = beat_num_bravo - 0.5
             winner_remain_hp = dmg_from_alfa_to_bravo * act_num_lose_pokemon
         else:
             # battle is DRAW
             pass
     return {
-        'pokemon_alfa': pokemon_alfa.Name,
-        'pokemon_bravo': pokemon_bravo.Name,
+        'pokemon_alfa': pokemon_alfa.name,
+        'pokemon_bravo': pokemon_bravo.name,
         'win_pokemon': win_pokemon,
         'winner_remain_hp': winner_remain_hp
     }
