@@ -31,7 +31,7 @@ def determine_atk_method(pokemon):
 
 
 def attack_efficiency(type_atk, pokemon_def):
-    data_type = pd.read_csv('type.csv', index_col=0)
+    data_type = pd.read_csv('data/type.csv', index_col=0)
     effect = data_type.loc[type_atk][pokemon_def['Type1']]
     if not pd.isnull(pokemon_def['Type2']):
         effect *= data_type.loc[type_atk][pokemon_def['Type2']]
