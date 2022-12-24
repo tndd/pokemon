@@ -15,7 +15,7 @@ class AtkMethod:
 
 
 def get_data_pokemon():
-    d_pokemon = pd.read_csv('pokemon.csv', index_col=0)
+    d_pokemon = pd.read_csv('data/pokemon.csv', index_col=0)
     # add column unique_name for index
     unique_name = d_pokemon['Name'] + '/' + d_pokemon['Variation'].fillna('')
     d_pokemon['unique_name'] = unique_name.str.rstrip('/') # remove right excess "/"
@@ -155,7 +155,7 @@ def simulate_battle():
             battle_results[poke_bravo]['draw'].append(poke_alfa)
             battle_results[poke_alfa]['draw'].append(poke_bravo)
         print(f"{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
-    with open('battle_results.json', 'w') as f:
+    with open('out/battle_results.json', 'w') as f:
         json.dump(battle_results, f, indent=4)
 
 
