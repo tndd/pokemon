@@ -154,7 +154,7 @@ def simulate_battle():
         else:
             battle_results[poke_bravo]['draw'].append(poke_alfa)
             battle_results[poke_alfa]['draw'].append(poke_bravo)
-        break
+        print(f"{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
     with open('battle_results.json', 'w') as f:
         json.dump(battle_results, f, indent=4)
 
