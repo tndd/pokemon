@@ -68,33 +68,46 @@ def calc_damage_best(pokemon_atk, pokemon_def):
     return dmg_best
 
 
-def calc_beat_num(pokemon_atk, pokemon_def):
+def calc_damage_percentage(pokemon_atk, pokemon_def):
     dmg = calc_damage_best(pokemon_atk, pokemon_def)
     pokemon_def_hp = pokemon_def['HP'] + 60
-    n = ceil(pokemon_def_hp / dmg)
-    print(f" {pokemon_atk.name} (AtkDmg: {dmg}, Spd: {pokemon_atk['Speed']}) | {pokemon_def.name} (HP : {pokemon_def_hp})")
-    return n
+    return (dmg / pokemon_def_hp)
 
 
-def battle(pokemon_me, pokemon_enemy):
-    print(f"### Battle ### : {pokemon_me.name} => {pokemon_enemy.name}")
-    beat_num_me = calc_beat_num(pokemon_me, pokemon_enemy)
-    beat_num_enemy = calc_beat_num(pokemon_enemy, pokemon_me)
-    # win = 1, lose = -1, draw = 0
-    if beat_num_me < beat_num_enemy:
-        return 1
-    elif beat_num_me > beat_num_enemy:
-        return -1
+def battle_report(pokemon_alfa, pokemon_bravo):
+    # calc inflict damage percentage
+    dmg_from_alfa_to_bravo = calc_damage_percentage(pokemon_alfa, pokemon_bravo)
+    dmg_from_bravo_to_alfa = calc_damage_percentage(pokemon_alfa, pokemon_bravo)
+    # calc beat num
+    beat_num_alfa = ceil(1 / dmg_from_alfa_to_bravo)
+    beat_num_bravo = ceil(1 / dmg_from_bravo_to_alfa)
+    # calc speed diff
+    spd_offset_based_on_alfa = pokemon_alfa['Speed'] - pokemon_bravo['Speed']
+    # judge battle: win = 1, lose = -1, draw = 0
+    win_pokemon = ''
+    if beat_num_alfa < beat_num_bravo:
+        win_pokemon = pokemon_alfa.Name
+    elif beat_num_alfa > beat_num_bravo:
+        win_pokemon = pokemon_bravo.Name
     else:
-        if pokemon_me['Speed'] > pokemon_enemy['Speed']:
-            return 1
-        elif pokemon_me['Speed'] < pokemon_enemy['Speed']:
-            return -1
+        if spd_offset_based_on_alfa > 0:
+            win_pokemon = pokemon_alfa.Name
+        elif spd_offset_based_on_alfa < 0:
+            win_pokemon = pokemon_bravo.Name
         else:
-            return 0
+            win_pokemon = 'DRAW'
+    return {
+        'pokemon_alfa': pokemon_alfa.Name,
+        'pokemon_bravo': pokemon_bravo.Name,
+        'dmg_from_alfa_to_bravo': dmg_from_alfa_to_bravo,
+        'dmg_from_bravo_to_alfa': dmg_from_bravo_to_alfa,
+        'beat_num_from_alfa_to_bravo': beat_num_alfa,
+        'beat_num_from_bravo_to_alfa': beat_num_bravo,
+        'win_pokemon': win_pokemon
+    }
 
 
-def main():
+def simulate_battle():
     d_pokemon = get_data_pokemon()
     battle_results = defaultdict(
         lambda: {
@@ -103,22 +116,27 @@ def main():
             'draw': []
         }
     )
-    for poke_a, poke_b in permutations(list(d_pokemon.index), 2):
-        r = battle(d_pokemon.loc[poke_a], d_pokemon.loc[poke_b])
-        if r == 1:
-            battle_results[poke_a]['win'][poke_b] = 1.0
-            battle_results[poke_b]['lose'][poke_a] = 1.0
-        elif r == -1:
-            battle_results[poke_b]['win'][poke_a] = 1.0
-            battle_results[poke_a]['lose'][poke_b] = 1.0
+    for poke_alfa, poke_bravo in permutations(list(d_pokemon.index), 2):
+        r = battle_report(d_pokemon.loc[poke_alfa], d_pokemon.loc[poke_bravo])
+        print(r)
+        if r['win_pokemon'] == poke_alfa:
+            battle_results[poke_alfa]['win'][poke_bravo] = r['dmg_from_bravo_to_alfa']
+            battle_results[poke_bravo]['lose'][poke_alfa] = r['dmg_from_bravo_to_alfa']
+        elif r['win_pokemon'] == poke_bravo:
+            battle_results[poke_bravo]['win'][poke_alfa] = r['dmg_from_alfa_to_bravo']
+            battle_results[poke_alfa]['lose'][poke_bravo] = r['dmg_from_alfa_to_bravo']
         else:
-            battle_results[poke_b]['draw'].append(poke_a)
-            battle_results[poke_a]['draw'].append(poke_b)
+            battle_results[poke_bravo]['draw'].append(poke_alfa)
+            battle_results[poke_alfa]['draw'].append(poke_bravo)
         print(r)
         break
-    with open('battle_results.yml', 'w') as f:
+    with open('battle_results.json', 'w') as f:
         import json
         json.dump(dict(battle_results), f)
+
+
+def main():
+    simulate_battle()
 
 
 if __name__ == '__main__':
