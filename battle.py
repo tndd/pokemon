@@ -42,17 +42,17 @@ def calc_damage(
         atk_type,
         pokemon_def,
         move_dmg = 120,
-        base_stats_atk = 0,
-        base_stats_def = 0,
+        base_stats_atk = 31,
+        base_stats_def = 31,
         effort_value_atk = 0,
         effort_value_def = 0,
         nature_atk = 1,
         nature_def = 1
     ):
-    pokemon_atk_value = floor((atk_method.value + (base_stats_atk // 2) + (effort_value_atk // 8) + 5) * nature_atk)
-    pokemon_def_value = floor((pokemon_def[atk_method.def_category] + (base_stats_def // 2) + (effort_value_def // 8) + 5) * nature_def)
-    base_dmg = move_dmg * pokemon_atk_value // pokemon_def_value
-    damage = ((22 * base_dmg) // 50) + 2
+    pokemon_atk_value = floor((atk_method.value + (base_stats_atk / 2) + (effort_value_atk / 8) + 5) * nature_atk)
+    pokemon_def_value = floor((pokemon_def[atk_method.def_category] + (base_stats_def / 2) + (effort_value_def / 8) + 5) * nature_def)
+    base_dmg = floor(22 * move_dmg * pokemon_atk_value / pokemon_def_value)
+    damage = floor(base_dmg / 50) + 2
     efficiency = attack_efficiency(atk_type, pokemon_def)
     return int(damage * efficiency)
 
@@ -68,16 +68,21 @@ def calc_damage_best(pokemon_atk, pokemon_def):
     return dmg_best
 
 
-def calc_damage_percentage(pokemon_atk, pokemon_def):
+def calc_damage_percentage(
+        pokemon_atk,
+        pokemon_def,
+        base_stat_hp = 31,
+        effort_value_hp = 0,
+    ):
     dmg = calc_damage_best(pokemon_atk, pokemon_def)
-    pokemon_def_hp = pokemon_def['HP'] + 60
+    pokemon_def_hp = pokemon_def['HP'] + floor((base_stat_hp / 2) + (effort_value_hp / 8)) + 60
     return (dmg / pokemon_def_hp)
 
 
 def battle_report(pokemon_alfa, pokemon_bravo):
     # calc inflict damage percentage
     dmg_from_alfa_to_bravo = calc_damage_percentage(pokemon_alfa, pokemon_bravo)
-    dmg_from_bravo_to_alfa = calc_damage_percentage(pokemon_alfa, pokemon_bravo)
+    dmg_from_bravo_to_alfa = calc_damage_percentage(pokemon_bravo, pokemon_alfa)
     # calc beat num
     beat_num_alfa = ceil(1 / dmg_from_alfa_to_bravo)
     beat_num_bravo = ceil(1 / dmg_from_bravo_to_alfa)
@@ -136,7 +141,10 @@ def simulate_battle():
 
 
 def main():
-    simulate_battle()
+    d = get_data_pokemon()
+    mimikyu = d.loc['Mimikyu']
+    garchomp = d.loc['Garchomp']
+    print(battle_report(garchomp, mimikyu))
 
 
 if __name__ == '__main__':
