@@ -1,4 +1,3 @@
-import yaml
 from dataclasses import dataclass
 from math import floor, ceil
 from itertools import permutations
