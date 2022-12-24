@@ -1,7 +1,7 @@
 import json
 from collections import defaultdict
 from dataclasses import dataclass
-from itertools import permutations
+from itertools import combinations
 from math import ceil, floor
 
 import numpy as np
@@ -143,7 +143,7 @@ def simulate_battle():
             'draw': []
         }
     )
-    for poke_alfa, poke_bravo in permutations(list(d_pokemon.index), 2):
+    for poke_alfa, poke_bravo in combinations(list(d_pokemon.index), 2):
         r = battle_report(d_pokemon.loc[poke_alfa], d_pokemon.loc[poke_bravo])
         if r['win_pokemon'] == poke_alfa:
             battle_results[poke_alfa]['win'][poke_bravo] = r['winner_remain_hp']
