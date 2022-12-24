@@ -4,6 +4,7 @@ from itertools import permutations
 from collections import defaultdict
 
 import pandas as pd
+import numpy as np
 
 
 @dataclass
@@ -40,7 +41,7 @@ def calc_damage(
         atk_method,
         atk_type,
         pokemon_def,
-        move_dmg = 120,
+        move_dmg = 80,
         base_stats_atk = 31,
         base_stats_def = 31,
         effort_value_atk = 0,
@@ -51,9 +52,9 @@ def calc_damage(
     pokemon_atk_value = floor((atk_method.value + (base_stats_atk / 2) + (effort_value_atk / 8) + 5) * nature_atk)
     pokemon_def_value = floor((pokemon_def[atk_method.def_category] + (base_stats_def / 2) + (effort_value_def / 8) + 5) * nature_def)
     base_dmg = floor(22 * move_dmg * pokemon_atk_value / pokemon_def_value)
-    damage = floor(base_dmg / 50) + 2
+    damage = np.round(floor((base_dmg / 50) + 2) * 1.5)
     efficiency = attack_efficiency(atk_type, pokemon_def)
-    return int(damage * efficiency)
+    return floor(damage * efficiency)
 
 
 def calc_damage_best(pokemon_atk, pokemon_def):
@@ -86,28 +87,49 @@ def battle_report(pokemon_alfa, pokemon_bravo):
     beat_num_alfa = ceil(1 / dmg_from_alfa_to_bravo)
     beat_num_bravo = ceil(1 / dmg_from_bravo_to_alfa)
     # calc speed diff
-    spd_offset_based_on_alfa = pokemon_alfa['Speed'] - pokemon_bravo['Speed']
+    spd_offset_based_on_alfa = pokemon_bravo['Speed'] - pokemon_alfa['Speed']
     # judge battle: win = 1, lose = -1, draw = 0
-    win_pokemon = ''
-    if beat_num_alfa < beat_num_bravo:
-        win_pokemon = pokemon_alfa.Name
-    elif beat_num_alfa > beat_num_bravo:
-        win_pokemon = pokemon_bravo.Name
-    else:
-        if spd_offset_based_on_alfa > 0:
+    win_pokemon = None
+    act_num_lose_pokemon = None
+    winner_remain_hp = None
+    if spd_offset_based_on_alfa < 0:
+        # alfa is faster than bravo
+        if beat_num_alfa <= beat_num_bravo:
             win_pokemon = pokemon_alfa.Name
-        elif spd_offset_based_on_alfa < 0:
+            act_num_lose_pokemon = beat_num_alfa - 1
+            winner_remain_hp = 1 - dmg_from_bravo_to_alfa * act_num_lose_pokemon
+        elif beat_num_alfa > beat_num_bravo:
             win_pokemon = pokemon_bravo.Name
+            act_num_lose_pokemon = beat_num_bravo
+            winner_remain_hp = 1 - dmg_from_alfa_to_bravo * act_num_lose_pokemon
+    elif spd_offset_based_on_alfa > 0:
+        # bravo is faster than alfa
+        if beat_num_bravo <= beat_num_alfa:
+            win_pokemon = pokemon_bravo.Name
+            act_num_lose_pokemon = beat_num_bravo - 1
+            winner_remain_hp = 1 - dmg_from_alfa_to_bravo * act_num_lose_pokemon
+        elif beat_num_bravo > beat_num_alfa:
+            win_pokemon = pokemon_alfa.Name
+            act_num_lose_pokemon = beat_num_alfa
+            winner_remain_hp = 1 - dmg_from_bravo_to_alfa * act_num_lose_pokemon
+    else:
+        # speed of alfa & bravo is equal
+        if beat_num_alfa < beat_num_bravo:
+            win_pokemon = pokemon_alfa.Name
+            act_num_lose_pokemon = beat_num_alfa - 0.5
+            winner_remain_hp = dmg_from_bravo_to_alfa * act_num_lose_pokemon
+        elif beat_num_alfa > beat_num_bravo:
+            win_pokemon = pokemon_bravo.Name
+            act_num_lose_pokemon = beat_num_bravo - 0.5
+            winner_remain_hp = dmg_from_alfa_to_bravo * act_num_lose_pokemon
         else:
-            win_pokemon = 'DRAW'
+            # battle is DRAW
+            pass
     return {
         'pokemon_alfa': pokemon_alfa.Name,
         'pokemon_bravo': pokemon_bravo.Name,
-        'dmg_from_alfa_to_bravo': dmg_from_alfa_to_bravo,
-        'dmg_from_bravo_to_alfa': dmg_from_bravo_to_alfa,
-        'beat_num_from_alfa_to_bravo': beat_num_alfa,
-        'beat_num_from_bravo_to_alfa': beat_num_bravo,
-        'win_pokemon': win_pokemon
+        'win_pokemon': win_pokemon,
+        'winner_remain_hp': winner_remain_hp
     }
 
 
@@ -123,6 +145,7 @@ def simulate_battle():
     for poke_alfa, poke_bravo in permutations(list(d_pokemon.index), 2):
         r = battle_report(d_pokemon.loc[poke_alfa], d_pokemon.loc[poke_bravo])
         print(r)
+        return
         if r['win_pokemon'] == poke_alfa:
             battle_results[poke_alfa]['win'][poke_bravo] = r['dmg_from_bravo_to_alfa']
             battle_results[poke_bravo]['lose'][poke_alfa] = r['dmg_from_bravo_to_alfa']
@@ -143,7 +166,8 @@ def main():
     d = get_data_pokemon()
     mimikyu = d.loc['Mimikyu']
     garchomp = d.loc['Garchomp']
-    print(battle_report(garchomp, mimikyu))
+    dragonite = d.loc['Dragonite']
+    print(battle_report(dragonite, mimikyu))
 
 
 if __name__ == '__main__':
