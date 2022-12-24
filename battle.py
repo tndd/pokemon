@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass
 from math import floor, ceil
 from itertools import permutations
@@ -155,8 +156,7 @@ def simulate_battle():
             battle_results[poke_alfa]['draw'].append(poke_bravo)
         break
     with open('battle_results.json', 'w') as f:
-        import json
-        json.dump(dict(battle_results), f)
+        json.dump(battle_results, f, indent=4)
 
 
 def main():
