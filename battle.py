@@ -144,18 +144,15 @@ def simulate_battle():
     )
     for poke_alfa, poke_bravo in permutations(list(d_pokemon.index), 2):
         r = battle_report(d_pokemon.loc[poke_alfa], d_pokemon.loc[poke_bravo])
-        print(r)
-        return
         if r['win_pokemon'] == poke_alfa:
-            battle_results[poke_alfa]['win'][poke_bravo] = r['dmg_from_bravo_to_alfa']
-            battle_results[poke_bravo]['lose'][poke_alfa] = r['dmg_from_bravo_to_alfa']
+            battle_results[poke_alfa]['win'][poke_bravo] = r['winner_remain_hp']
+            battle_results[poke_bravo]['lose'][poke_alfa] = r['winner_remain_hp']
         elif r['win_pokemon'] == poke_bravo:
-            battle_results[poke_bravo]['win'][poke_alfa] = r['dmg_from_alfa_to_bravo']
-            battle_results[poke_alfa]['lose'][poke_bravo] = r['dmg_from_alfa_to_bravo']
+            battle_results[poke_bravo]['win'][poke_alfa] = r['winner_remain_hp']
+            battle_results[poke_alfa]['lose'][poke_bravo] = r['winner_remain_hp']
         else:
             battle_results[poke_bravo]['draw'].append(poke_alfa)
             battle_results[poke_alfa]['draw'].append(poke_bravo)
-        print(r)
         break
     with open('battle_results.json', 'w') as f:
         import json
@@ -163,11 +160,7 @@ def simulate_battle():
 
 
 def main():
-    d = get_data_pokemon()
-    mimikyu = d.loc['Mimikyu']
-    garchomp = d.loc['Garchomp']
-    dragonite = d.loc['Dragonite']
-    print(battle_report(dragonite, mimikyu))
+    simulate_battle()
 
 
 if __name__ == '__main__':
