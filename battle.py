@@ -157,7 +157,7 @@ def simulate_battle(move_dmg):
             battle_results[poke_bravo]['draw'].append(poke_alfa)
             battle_results[poke_alfa]['draw'].append(poke_bravo)
         print(f"{move_dmg}\t{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
-    with open(f'out/battle_results_md{move_dmg}.json', 'w') as f:
+    with open(f'out/battle_results/md{move_dmg}.json', 'w') as f:
         json.dump(battle_results, f, indent=4)
     return battle_results
 
