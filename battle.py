@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+from concurrent import futures
 from dataclasses import dataclass
 from itertools import combinations
 from math import ceil, floor
@@ -155,19 +156,20 @@ def simulate_battle(move_dmg):
         else:
             battle_results[poke_bravo]['draw'].append(poke_alfa)
             battle_results[poke_alfa]['draw'].append(poke_bravo)
-        print(f"{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
+        print(f"{move_dmg}\t{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
     with open(f'out/battle_results_md{move_dmg}.json', 'w') as f:
         json.dump(battle_results, f, indent=4)
+    return battle_results
+
+
+def simulate_battle_multi_process(move_dmgs = [70, 80, 90, 100]):
+    with futures.ProcessPoolExecutor(max_workers=4) as executer:
+        for dmg in move_dmgs:
+            executer.submit(simulate_battle, dmg)
 
 
 def main():
-    for md in [70, 90, 100]:
-        simulate_battle(md)
-    # d = get_data_pokemon()
-    # seismitoad = d.loc['Seismitoad']
-    # miraidon = d.loc['Miraidon']
-    # r = battle_report(seismitoad, miraidon)
-    # print(r)
+    simulate_battle_multi_process()
 
 
 if __name__ == '__main__':
