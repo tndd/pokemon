@@ -81,7 +81,7 @@ def calc_damage_percentage(
     return (dmg / pokemon_def_hp)
 
 
-def battle_report(pokemon_alfa, pokemon_bravo, move_dmg=80):
+def battle_report(pokemon_alfa, pokemon_bravo, move_dmg):
     # calc inflict damage percentage
     dmg_from_alfa_to_bravo = calc_damage_percentage(pokemon_alfa, pokemon_bravo, move_dmg)
     dmg_from_bravo_to_alfa = calc_damage_percentage(pokemon_bravo, pokemon_alfa, move_dmg)
@@ -135,7 +135,7 @@ def battle_report(pokemon_alfa, pokemon_bravo, move_dmg=80):
     }
 
 
-def simulate_battle():
+def simulate_battle(move_dmg):
     d_pokemon = get_data_pokemon()
     battle_results = defaultdict(
         lambda: {
@@ -145,7 +145,7 @@ def simulate_battle():
         }
     )
     for poke_alfa, poke_bravo in combinations(list(d_pokemon.index), 2):
-        r = battle_report(d_pokemon.loc[poke_alfa], d_pokemon.loc[poke_bravo])
+        r = battle_report(d_pokemon.loc[poke_alfa], d_pokemon.loc[poke_bravo], move_dmg)
         if r['win_pokemon'] == poke_alfa:
             battle_results[poke_alfa]['win'][poke_bravo] = r['winner_remain_hp']
             battle_results[poke_bravo]['lose'][poke_alfa] = r['winner_remain_hp']
@@ -156,12 +156,13 @@ def simulate_battle():
             battle_results[poke_bravo]['draw'].append(poke_alfa)
             battle_results[poke_alfa]['draw'].append(poke_bravo)
         print(f"{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
-    with open('out/battle_results.json', 'w') as f:
+    with open(f'out/battle_results_md{move_dmg}.json', 'w') as f:
         json.dump(battle_results, f, indent=4)
 
 
 def main():
-    simulate_battle()
+    for md in [70, 90, 100]:
+        simulate_battle(md)
     # d = get_data_pokemon()
     # seismitoad = d.loc['Seismitoad']
     # miraidon = d.loc['Miraidon']
