@@ -161,12 +161,12 @@ def simulate_battle():
 
 
 def main():
-    # simulate_battle()
-    d = get_data_pokemon()
-    seismitoad = d.loc['Seismitoad']
-    miraidon = d.loc['Miraidon']
-    r = battle_report(seismitoad, miraidon)
-    print(r)
+    simulate_battle()
+    # d = get_data_pokemon()
+    # seismitoad = d.loc['Seismitoad']
+    # miraidon = d.loc['Miraidon']
+    # r = battle_report(seismitoad, miraidon)
+    # print(r)
 
 
 if __name__ == '__main__':
