@@ -42,7 +42,7 @@ def calc_damage(
         atk_method,
         atk_type,
         pokemon_def,
-        move_dmg = 80,
+        move_dmg,
         base_stats_atk = 31,
         base_stats_def = 31,
         effort_value_atk = 0,
@@ -58,11 +58,11 @@ def calc_damage(
     return floor(damage * efficiency)
 
 
-def calc_damage_best(pokemon_atk, pokemon_def):
+def calc_damage_best(pokemon_atk, pokemon_def, move_dmg):
     atk_method = determine_atk_method(pokemon_atk)
-    dmg_best = calc_damage(atk_method, pokemon_atk['Type1'], pokemon_def)
+    dmg_best = calc_damage(atk_method, pokemon_atk['Type1'], pokemon_def, move_dmg)
     if not pd.isnull(pokemon_atk['Type2']):
-        dmg_best = max(dmg_best, calc_damage(atk_method, pokemon_atk['Type2'], pokemon_def))
+        dmg_best = max(dmg_best, calc_damage(atk_method, pokemon_atk['Type2'], pokemon_def, move_dmg))
     if dmg_best == 0:
         # case of zero damage
         dmg_best = 0.1
@@ -72,18 +72,19 @@ def calc_damage_best(pokemon_atk, pokemon_def):
 def calc_damage_percentage(
         pokemon_atk,
         pokemon_def,
+        move_dmg,
         base_stat_hp = 31,
         effort_value_hp = 0,
     ):
-    dmg = calc_damage_best(pokemon_atk, pokemon_def)
+    dmg = calc_damage_best(pokemon_atk, pokemon_def, move_dmg)
     pokemon_def_hp = pokemon_def['HP'] + floor((base_stat_hp / 2) + (effort_value_hp / 8)) + 60
     return (dmg / pokemon_def_hp)
 
 
-def battle_report(pokemon_alfa, pokemon_bravo):
+def battle_report(pokemon_alfa, pokemon_bravo, move_dmg=80):
     # calc inflict damage percentage
-    dmg_from_alfa_to_bravo = calc_damage_percentage(pokemon_alfa, pokemon_bravo)
-    dmg_from_bravo_to_alfa = calc_damage_percentage(pokemon_bravo, pokemon_alfa)
+    dmg_from_alfa_to_bravo = calc_damage_percentage(pokemon_alfa, pokemon_bravo, move_dmg)
+    dmg_from_bravo_to_alfa = calc_damage_percentage(pokemon_bravo, pokemon_alfa, move_dmg)
     # calc beat num
     beat_num_alfa = ceil(1 / dmg_from_alfa_to_bravo)
     beat_num_bravo = ceil(1 / dmg_from_bravo_to_alfa)
@@ -160,7 +161,12 @@ def simulate_battle():
 
 
 def main():
-    simulate_battle()
+    # simulate_battle()
+    d = get_data_pokemon()
+    seismitoad = d.loc['Seismitoad']
+    miraidon = d.loc['Miraidon']
+    r = battle_report(seismitoad, miraidon)
+    print(r)
 
 
 if __name__ == '__main__':
