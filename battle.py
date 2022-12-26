@@ -162,14 +162,15 @@ def simulate_battle(move_dmg):
     return battle_results
 
 
-def simulate_battle_multi_process(move_dmgs = [70, 80, 90, 100]):
+def simulate_battle_multi_process(move_dmgs):
     with futures.ProcessPoolExecutor(max_workers=4) as executer:
         for dmg in move_dmgs:
             executer.submit(simulate_battle, dmg)
 
 
 def main():
-    simulate_battle_multi_process()
+    move_dmgs = [70, 80, 90, 100]
+    simulate_battle_multi_process(move_dmgs)
 
 
 if __name__ == '__main__':
