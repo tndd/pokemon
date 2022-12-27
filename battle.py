@@ -74,6 +74,8 @@ def calc_damage_best(pokemon_atk, pokemon_def, move_dmg):
     if dmg_best == 0:
         # case of zero damage
         dmg_best = 0.1
+    if pokemon_atk.name == 'Azumarill':
+        dmg_best *= 2
     return dmg_best
 
 
@@ -178,6 +180,7 @@ def main():
     pokemons = get_data_pokemon_paldea()
     move_dmgs = [70, 80, 90, 100]
     simulate_battle_multi_process(pokemons, move_dmgs)
+
 
 if __name__ == '__main__':
     main()
