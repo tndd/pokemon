@@ -23,6 +23,13 @@ def get_data_pokemon():
     return d_pokemon.set_index('unique_name')
 
 
+def get_data_pokemon_paldea():
+    d_pokemon = get_data_pokemon()
+    with open('data/paldea.json', 'r') as f:
+        pokemons_paldea = json.load(f)
+    return d_pokemon.loc[pokemons_paldea['legal']]
+
+
 def determine_atk_method(pokemon):
     if pokemon['Attack'] > pokemon['Sp. Atk']:
         atk_method = AtkMethod(pokemon['Attack'], 'Defense')
@@ -137,7 +144,6 @@ def battle_report(pokemon_alfa, pokemon_bravo, move_dmg):
 
 
 def simulate_battle(pokemons, move_dmg):
-    pokemons = get_data_pokemon()
     battle_results = defaultdict(
         lambda: {
             'win': defaultdict(float),  # received damage until win
@@ -169,10 +175,9 @@ def simulate_battle_multi_process(pokemons, move_dmgs):
 
 
 def main():
-    pokemons = get_data_pokemon()
+    pokemons = get_data_pokemon_paldea()
     move_dmgs = [70, 80, 90, 100]
     simulate_battle_multi_process(pokemons, move_dmgs)
-
 
 if __name__ == '__main__':
     main()
