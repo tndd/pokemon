@@ -136,8 +136,8 @@ def battle_report(pokemon_alfa, pokemon_bravo, move_dmg):
     }
 
 
-def simulate_battle(move_dmg):
-    d_pokemon = get_data_pokemon()
+def simulate_battle(pokemons, move_dmg):
+    pokemons = get_data_pokemon()
     battle_results = defaultdict(
         lambda: {
             'win': defaultdict(float),  # received damage until win
@@ -145,8 +145,8 @@ def simulate_battle(move_dmg):
             'draw': []
         }
     )
-    for poke_alfa, poke_bravo in combinations(list(d_pokemon.index), 2):
-        r = battle_report(d_pokemon.loc[poke_alfa], d_pokemon.loc[poke_bravo], move_dmg)
+    for poke_alfa, poke_bravo in combinations(list(pokemons.index), 2):
+        r = battle_report(pokemons.loc[poke_alfa], pokemons.loc[poke_bravo], move_dmg)
         if r['win_pokemon'] == poke_alfa:
             battle_results[poke_alfa]['win'][poke_bravo] = r['winner_remain_hp']
             battle_results[poke_bravo]['lose'][poke_alfa] = r['winner_remain_hp']
@@ -162,15 +162,16 @@ def simulate_battle(move_dmg):
     return battle_results
 
 
-def simulate_battle_multi_process(move_dmgs):
+def simulate_battle_multi_process(pokemons, move_dmgs):
     with futures.ProcessPoolExecutor(max_workers=4) as executer:
         for dmg in move_dmgs:
-            executer.submit(simulate_battle, dmg)
+            executer.submit(simulate_battle, pokemons, dmg)
 
 
 def main():
+    pokemons = get_data_pokemon()
     move_dmgs = [70, 80, 90, 100]
-    simulate_battle_multi_process(move_dmgs)
+    simulate_battle_multi_process(pokemons, move_dmgs)
 
 
 if __name__ == '__main__':
