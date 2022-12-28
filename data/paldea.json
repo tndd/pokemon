@@ -80,7 +80,6 @@
         "Dachsbun",
         "Slakoth",
         "Vigoroth",
-        "Slaking",
         "Bounsweet",
         "Steenee",
         "Tsareena",
@@ -390,6 +389,9 @@
         "Gimmighoul/Chest Form",
         "Gimmighoul/Roaming Form",
         "Gholdengo"
+    ],
+    "exclude": [
+        "Slaking"
     ],
     "illegal": [
         "Great Tusk",
