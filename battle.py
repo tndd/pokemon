@@ -60,6 +60,7 @@ def calc_damage(
     ):
     pokemon_atk_value = floor((atk_method.value + (base_stats_atk / 2) + (effort_value_atk / 8) + 5) * nature_atk)
     pokemon_def_value = floor((pokemon_def[atk_method.def_category] + (base_stats_def / 2) + (effort_value_def / 8) + 5) * nature_def)
+    # correction defence
     if pokemon_def.name == 'Tyranitar' and atk_method.def_category == 'Sp. Def':
         pokemon_def_value = floor(pokemon_def_value * 1.5)
     elif pokemon_def.name == 'Abomasnow' and atk_method.def_category == 'Defense':
