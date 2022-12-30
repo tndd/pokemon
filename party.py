@@ -4,6 +4,7 @@ from collections import defaultdict
 from concurrent import futures
 
 import pandas as pd
+import numpy as np
 
 
 def party_combinations(title='md80', top=30, unit=6):
@@ -25,22 +26,29 @@ def party_score(battle_results, party):
 
 def party_scores(battle_results, parties):
     scores = {}
-    executer = futures.ProcessPoolExecutor(max_workers=4)
-    fts = [executer.submit(party_score, battle_results, party) for party in parties]
-    for future in fts:
-        party_name = '|'.join(future.result()[0])
-        scores[party_name] = future.result()[1]
+    for party in parties:
+        r = party_score(battle_results, party)
+        party_name = '|'.join(r[0])
+        scores[party_name] = r[1]
     df = pd.DataFrame.from_dict(data=scores, orient="index")
     df.index.name = 'Party'
-    df.to_csv('out/party/score.csv')
-    return scores
+    return df
+
+
+def party_scores_multi_process(battle_results, parties, max_workers=4):
+    parties_splited = list(np.array_split(parties, 4))
+    executer = futures.ProcessPoolExecutor(max_workers=max_workers)
+    fts = [executer.submit(party_scores, battle_results, parties) for parties in parties_splited]
+    dfs = [f.result() for f in fts]
+    df_score = pd.concat(dfs)
+    df_score.to_csv('out/party/score.csv', chunksize=1000)
 
 
 def main() -> None:
-    p = party_combinations(top=100, unit=3)
+    p = party_combinations(top=50, unit=3)
     with open('out/battle_results/md80.json', 'r') as f:
         br = json.load(f)
-    party_scores(br, p)
+    party_scores_multi_process(br, p)
 
 
 if __name__ == '__main__':
