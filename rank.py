@@ -25,7 +25,7 @@ def poke_score():
     _mean = df_score['score_mean'].mean()
     df_score.insert(0, 'deviation_score_mean', df_score[f'score_mean'].map(lambda x: (10 * (x - _mean) / _std) + 50).astype(float))
     df_score = df_score.sort_values('deviation_score_mean', ascending=False)
-    df_score.to_csv(f'out/pokemon_rank.csv')
+    df_score.to_csv(f'out/pokemon_rank.csv', float_format='%.2f')
 
 
 def main() -> None:
