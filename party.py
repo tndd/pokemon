@@ -7,7 +7,7 @@ import pandas as pd
 
 
 def party_combinations(title='md80', top=30, unit=6):
-    df = pd.read_csv(f'out/pokemon_score/{title}.csv')[:top]
+    df = pd.read_csv(f'out/pokemon_rank.csv')[:top]
     return list(combinations(df['name'], unit))
 
 
