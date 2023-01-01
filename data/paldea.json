@@ -298,7 +298,6 @@
         "Bombirdier",
         "Finizen",
         "Palafin/Zero Form",
-        "Palafin/Hero Form",
         "Varoom",
         "Revavroom",
         "Cyclizar",
@@ -396,7 +395,8 @@
         "Gholdengo"
     ],
     "exclude": [
-        "Slaking"
+        "Slaking",
+        "Palafin/Hero Form"
     ],
     "illegal": [
         "Great Tusk",
