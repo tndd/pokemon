@@ -164,7 +164,7 @@ def simulate_battle(pokemons, move_dmg):
             battle_results[poke_bravo][poke_alfa] = 0
             battle_results[poke_alfa][poke_bravo] = 0
         print(f"{move_dmg}\t{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
-    df = pd.DataFrame.from_dict(battle_results)
+    df = pd.DataFrame.from_dict(battle_results, orient="index")
     df.index.name = 'Self'
     df.to_csv(f'out/battle_results/md{move_dmg}.csv')
     return df
@@ -177,6 +177,8 @@ def simulate_battle_multi_process(pokemons, move_dmgs):
         dfs = [future.result() for future in futures.as_completed(result_future)]
     df = pd.concat(dfs)
     df = df.groupby(df.index).mean()
+    df.insert(0, 'score', df.sum(axis=1))
+    df = df.sort_values('score', ascending=False)
     df.to_csv('out/battle_results/avg.csv')
 
 
