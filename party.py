@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 
-def party_combinations(top=10, unit=6):
+def party_combinations(top, unit):
     df = pd.read_csv(f'out/battle_results/avg.csv')[:top]
     return list(combinations(df['Self'], unit))
 
