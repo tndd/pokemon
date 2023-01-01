@@ -7,20 +7,18 @@ import pandas as pd
 import numpy as np
 
 
-def party_combinations(title='md80', top=30, unit=6):
-    df = pd.read_csv(f'out/pokemon_rank.csv')[:top]
-    return list(combinations(df['name'], unit))
+def party_combinations(top=10, unit=6):
+    df = pd.read_csv(f'out/battle_results/avg.csv')[:top]
+    return list(combinations(df['Self'], unit))
 
 
 def party_score(battle_results, party):
-    print(party)
+    print(' | '.join(party))
     party_score = defaultdict(float)
-    for pty_pokemon in party:
-        r = battle_results[pty_pokemon]
-        for poke, score in r['win'].items():
-            party_score[poke] += score
-        for poke, score in r['lose'].items():
-            party_score[poke] -= score
+    for pokemon_pty in party:
+        r = battle_results.loc[pokemon_pty]
+        for pokemon, score in r.items():
+            party_score[pokemon] += score
     return (party, party_score)
 
 
@@ -41,13 +39,14 @@ def party_scores_multi_process(battle_results, parties, max_workers=4):
     fts = [executer.submit(party_scores, battle_results, parties) for parties in parties_splited]
     dfs = [f.result() for f in fts]
     df_score = pd.concat(dfs)
+    df_score.insert(0, 'score', df_score.sum(axis=1))
+    df_score = df_score.sort_values('score', ascending=False)
     df_score.to_csv('out/party/score.csv', chunksize=1000)
 
 
 def main() -> None:
     p = party_combinations(top=50, unit=3)
-    with open('out/battle_results/md80.json', 'r') as f:
-        br = json.load(f)
+    br = pd.read_csv('out/battle_results/avg.csv').set_index('Self').drop('score', axis=1)
     party_scores_multi_process(br, p)
 
 
