@@ -34,8 +34,8 @@ def get_df_party_scores(battle_results, parties):
 
 def get_df_party_scores_multi_process(battle_results, parties, max_workers):
     parties_splited = list(np.array_split(parties, max_workers))
-    executer = futures.ProcessPoolExecutor(max_workers=max_workers)
-    fts = [executer.submit(get_df_party_scores, battle_results, parties) for parties in parties_splited]
+    with futures.ProcessPoolExecutor(max_workers=max_workers) as executer:
+        fts = [executer.submit(get_df_party_scores, battle_results, parties) for parties in parties_splited]
     dfs = [f.result() for f in fts]
     df_score = pd.concat(dfs)
     df_score.insert(0, 'score', df_score.sum(axis=1))
