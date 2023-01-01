@@ -151,24 +151,18 @@ def battle_report(pokemon_alfa, pokemon_bravo, move_dmg):
 
 
 def simulate_battle(pokemons, move_dmg):
-    battle_results = defaultdict(
-        lambda: {
-            'win': defaultdict(float),  # received damage until win
-            'lose': defaultdict(float), # inflict damage until lose
-            'draw': []
-        }
-    )
+    battle_results = defaultdict(lambda: defaultdict(float))
     for poke_alfa, poke_bravo in combinations(list(pokemons.index), 2):
         r = battle_report(pokemons.loc[poke_alfa], pokemons.loc[poke_bravo], move_dmg)
         if r['win_pokemon'] == poke_alfa:
-            battle_results[poke_alfa]['win'][poke_bravo] = r['winner_remain_hp']
-            battle_results[poke_bravo]['lose'][poke_alfa] = r['winner_remain_hp']
+            battle_results[poke_alfa][poke_bravo] = r['winner_remain_hp']
+            battle_results[poke_bravo][poke_alfa] = -r['winner_remain_hp']
         elif r['win_pokemon'] == poke_bravo:
-            battle_results[poke_bravo]['win'][poke_alfa] = r['winner_remain_hp']
-            battle_results[poke_alfa]['lose'][poke_bravo] = r['winner_remain_hp']
+            battle_results[poke_bravo][poke_alfa] = r['winner_remain_hp']
+            battle_results[poke_alfa][poke_bravo] = -r['winner_remain_hp']
         else:
-            battle_results[poke_bravo]['draw'].append(poke_alfa)
-            battle_results[poke_alfa]['draw'].append(poke_bravo)
+            battle_results[poke_bravo][poke_alfa] = 0
+            battle_results[poke_alfa][poke_bravo] = 0
         print(f"{move_dmg}\t{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
     with open(f'out/battle_results/md{move_dmg}.json', 'w') as f:
         json.dump(battle_results, f, indent=4)
