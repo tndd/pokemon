@@ -165,17 +165,19 @@ def simulate_battle(pokemons, move_dmg):
             battle_results[poke_alfa][poke_bravo] = 0
         print(f"{move_dmg}\t{poke_alfa:32}\t{poke_bravo:32}\t{str(poke_alfa == r['win_pokemon']):16}\t{r['winner_remain_hp']}")
     df = pd.DataFrame.from_dict(battle_results)
-    df.index.name = 'self'
+    df.index.name = 'Self'
     df.to_csv(f'out/battle_results/md{move_dmg}.csv')
-    # with open(f'out/battle_results/md{move_dmg}.json', 'w') as f:
-    #     json.dump(battle_results, f, indent=4)
-    return battle_results
+    return df
 
 
 def simulate_battle_multi_process(pokemons, move_dmgs):
+    result_future = []
     with futures.ProcessPoolExecutor(max_workers=4) as executer:
-        for dmg in move_dmgs:
-            executer.submit(simulate_battle, pokemons, dmg)
+        result_future = [executer.submit(simulate_battle, pokemons, dmg) for dmg in move_dmgs]
+        dfs = [future.result() for future in futures.as_completed(result_future)]
+    df = pd.concat(dfs)
+    df = df.groupby(df.index).mean()
+    df.to_csv('out/battle_results/avg.csv')
 
 
 def main():
