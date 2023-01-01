@@ -1,6 +1,9 @@
-from itertools import combinations
+from os import makedirs
+from shutil import rmtree
+from itertools import combinations, zip_longest
 from collections import defaultdict
 from concurrent import futures
+from glob import glob
 
 import pandas as pd
 import numpy as np
@@ -38,20 +41,30 @@ def get_df_party_scores_multi_process(battle_results, parties, max_workers):
         fts = [executer.submit(get_df_party_scores, battle_results, parties) for parties in parties_splited]
     dfs = [f.result() for f in fts]
     df_score = pd.concat(dfs)
-    df_score.insert(0, 'score', df_score.sum(axis=1))
-    df_score = df_score.sort_values('score', ascending=False)
     return df_score
 
 
-def party_score(top, unit, max_workers=4):
-    p = party_combinations(top, unit)
+def party_score(top, unit, max_workers=8, segment=100000):
+    # make tmp dir
+    path_tmp_dir = f'out/party/score_top{top}_unit{unit}'
+    makedirs(path_tmp_dir, exist_ok=True)
+    # calc party scores
+    parties = party_combinations(top, unit)
     br = pd.read_csv('out/battle_results/avg.csv').set_index('Self').drop('score', axis=1)
-    df_score = get_df_party_scores_multi_process(br, p, max_workers)
-    df_score.to_csv(f'out/party/score_top{top}_unit{unit}.csv', chunksize=1000)
+    for n, parties_part in enumerate(zip_longest(*[iter(parties)] * min(segment, len(parties)))):
+        df_score = get_df_party_scores_multi_process(br, parties_part, max_workers)
+        df_score.to_csv(f'{path_tmp_dir}/{n}.csv', chunksize=1000)
+    # concat completed tmp party scores csv
+    df = pd.concat([pd.read_csv(path).set_index('Party') for path in glob(f'{path_tmp_dir}/*.csv')])
+    df.insert(0, 'score', df.sum(axis=1))
+    df = df.sort_values('score', ascending=False)
+    # remove tmp csv files after store full party score csv file
+    df.to_csv(f'{path_tmp_dir}.csv')
+    rmtree(path_tmp_dir)
 
 
 def main() -> None:
-    party_score(top=30, unit=6, max_workers=2)
+    party_score(top=30, unit=6)
 
 
 if __name__ == '__main__':
