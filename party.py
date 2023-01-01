@@ -32,8 +32,8 @@ def get_df_party_scores(battle_results, parties):
     return df
 
 
-def get_df_party_scores_multi_process(battle_results, parties, max_workers=4):
-    parties_splited = list(np.array_split(parties, 4))
+def get_df_party_scores_multi_process(battle_results, parties, max_workers):
+    parties_splited = list(np.array_split(parties, max_workers))
     executer = futures.ProcessPoolExecutor(max_workers=max_workers)
     fts = [executer.submit(get_df_party_scores, battle_results, parties) for parties in parties_splited]
     dfs = [f.result() for f in fts]
@@ -43,15 +43,15 @@ def get_df_party_scores_multi_process(battle_results, parties, max_workers=4):
     return df_score
 
 
-def party_score(top, unit):
+def party_score(top, unit, max_workers=4):
     p = party_combinations(top, unit)
     br = pd.read_csv('out/battle_results/avg.csv').set_index('Self').drop('score', axis=1)
-    df_score = get_df_party_scores_multi_process(br, p)
+    df_score = get_df_party_scores_multi_process(br, p, max_workers)
     df_score.to_csv(f'out/party/score_top{top}_unit{unit}.csv', chunksize=1000)
 
 
 def main() -> None:
-    party_score(top=50, unit=3)
+    party_score(top=30, unit=6, max_workers=2)
 
 
 if __name__ == '__main__':
