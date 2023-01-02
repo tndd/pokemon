@@ -6,7 +6,6 @@ from concurrent import futures
 from glob import glob
 
 import pandas as pd
-import numpy as np
 
 
 def party_combinations(top, unit):
@@ -36,7 +35,8 @@ def get_df_party_scores(battle_results, parties):
 
 
 def get_df_party_scores_multi_process(battle_results, parties, max_workers):
-    parties_splited = list(np.array_split(parties, max_workers))
+    chunk_size = len(parties) // max_workers
+    parties_splited = [parties[i:i + chunk_size] for i in range(0, len(parties), chunk_size)]
     with futures.ProcessPoolExecutor(max_workers=max_workers) as executer:
         fts = [executer.submit(get_df_party_scores, battle_results, parties) for parties in parties_splited]
     dfs = [f.result() for f in fts]
@@ -51,11 +51,12 @@ def party_score(top, unit, max_workers=8, segment=100000):
     # calc party scores
     parties = party_combinations(top, unit)
     br = pd.read_csv('out/battle_results/avg.csv').set_index('Self').drop('score', axis=1)
-    for n, parties_part in enumerate(zip_longest(*[iter(parties)] * min(segment, len(parties)))):
-        df_score = get_df_party_scores_multi_process(br, parties_part, max_workers)
-        df_score.to_csv(f'{path_tmp_dir}/{n}.csv', chunksize=1000)
+    for n, parties_part in enumerate(zip_longest(*[iter(parties)] * segment)):
+        partyies_part_exclude_none = [party for party in parties_part if party is not None]
+        df_score = get_df_party_scores_multi_process(br, partyies_part_exclude_none, max_workers)
+        df_score.to_pickle(f'{path_tmp_dir}/{n}.pkl')
     # concat completed tmp party scores csv
-    df = pd.concat([pd.read_csv(path).set_index('Party') for path in glob(f'{path_tmp_dir}/*.csv')])
+    df = pd.concat([pd.read_pickle(path) for path in glob(f'{path_tmp_dir}/*.pkl')])
     df.insert(0, 'score', df.sum(axis=1))
     df = df.sort_values('score', ascending=False)
     # remove tmp csv files after store full party score csv file
