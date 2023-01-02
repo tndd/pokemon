@@ -56,6 +56,7 @@ def party_score(top, unit, max_workers=8, segment=100000):
             partyies_part_exclude_none = [party for party in parties_part if party is not None]
             df_score = get_df_party_scores_multi_process(br, partyies_part_exclude_none, max_workers)
             df_score.to_pickle(f'{path_tmp_dir}/{n}.pkl')
+        print('Complete calc party scores.')
         # concat completed tmp party scores csv
         df = pd.concat([pd.read_pickle(path) for path in glob(f'{path_tmp_dir}/*.pkl')])
         # remove tmp csv files after store full party score csv file
@@ -67,7 +68,7 @@ def party_score(top, unit, max_workers=8, segment=100000):
 
 
 def main() -> None:
-    party_score(top=100, unit=6)
+    party_score(top=30, unit=6)
 
 
 if __name__ == '__main__':
