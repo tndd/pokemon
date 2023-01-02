@@ -35,7 +35,7 @@ def get_df_party_scores(battle_results, parties):
 
 
 def get_df_party_scores_multi_process(battle_results, parties, max_workers):
-    chunk_size = len(parties) // max_workers
+    chunk_size = max(1, len(parties) // max_workers)
     parties_splited = [parties[i:i + chunk_size] for i in range(0, len(parties), chunk_size)]
     with futures.ProcessPoolExecutor(max_workers=max_workers) as executer:
         fts = [executer.submit(get_df_party_scores, battle_results, parties) for parties in parties_splited]
@@ -65,7 +65,7 @@ def party_score(top, unit, max_workers=8, segment=100000):
 
 
 def main() -> None:
-    party_score(top=30, unit=6)
+    party_score(top=6, unit=6)
 
 
 if __name__ == '__main__':
