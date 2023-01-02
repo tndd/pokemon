@@ -48,24 +48,26 @@ def party_score(top, unit, max_workers=8, segment=100000):
     # make tmp dir
     path_tmp_dir = f'out/party/score_top{top}_unit{unit}'
     makedirs(path_tmp_dir, exist_ok=True)
-    # calc party scores
-    parties = party_combinations(top, unit)
-    br = pd.read_csv('out/battle_results/avg.csv').set_index('Self').drop('score', axis=1)
-    for n, parties_part in enumerate(zip_longest(*[iter(parties)] * segment)):
-        partyies_part_exclude_none = [party for party in parties_part if party is not None]
-        df_score = get_df_party_scores_multi_process(br, partyies_part_exclude_none, max_workers)
-        df_score.to_pickle(f'{path_tmp_dir}/{n}.pkl')
-    # concat completed tmp party scores csv
-    df = pd.concat([pd.read_pickle(path) for path in glob(f'{path_tmp_dir}/*.pkl')])
-    df.insert(0, 'score', df.sum(axis=1))
-    df = df.sort_values('score', ascending=False)
-    # remove tmp csv files after store full party score csv file
-    df.to_csv(f'{path_tmp_dir}.csv')
-    rmtree(path_tmp_dir)
+    try:
+        # calc party scores
+        parties = party_combinations(top, unit)
+        br = pd.read_csv('out/battle_results/avg.csv').set_index('Self').drop('score', axis=1)
+        for n, parties_part in enumerate(zip_longest(*[iter(parties)] * segment)):
+            partyies_part_exclude_none = [party for party in parties_part if party is not None]
+            df_score = get_df_party_scores_multi_process(br, partyies_part_exclude_none, max_workers)
+            df_score.to_pickle(f'{path_tmp_dir}/{n}.pkl')
+        # concat completed tmp party scores csv
+        df = pd.concat([pd.read_pickle(path) for path in glob(f'{path_tmp_dir}/*.pkl')])
+        # remove tmp csv files after store full party score csv file
+        df.to_pickle(f'{path_tmp_dir}.gz')
+    except Exception as e:
+        print(e)
+    finally:
+        rmtree(path_tmp_dir)
 
 
 def main() -> None:
-    party_score(top=6, unit=6)
+    party_score(top=100, unit=6)
 
 
 if __name__ == '__main__':
