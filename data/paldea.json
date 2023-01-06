@@ -392,13 +392,7 @@
         "Baxcalibur",
         "Gimmighoul/Chest Form",
         "Gimmighoul/Roaming Form",
-        "Gholdengo"
-    ],
-    "exclude": [
-        "Slaking",
-        "Palafin/Hero Form"
-    ],
-    "illegal": [
+        "Gholdengo",
         "Great Tusk",
         "Scream Tail",
         "Brute Bonnet",
@@ -410,7 +404,13 @@
         "Iron Hands",
         "Iron Jugulis",
         "Iron Moth",
-        "Iron Thorns",
+        "Iron Thorns"
+    ],
+    "exclude": [
+        "Slaking",
+        "Palafin/Hero Form"
+    ],
+    "illegal": [
         "Wo-Chien",
         "Chien-Pao",
         "Ting-Lu",
