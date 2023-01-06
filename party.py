@@ -14,7 +14,7 @@ def party_combinations(top, unit):
 
 
 def get_party_score(battle_results, party):
-    print(' | '.join(party))
+    print('\t'.join(item.ljust(16) for item in party))
     party_score = defaultdict(float)
     for pokemon_pty in party:
         r = battle_results.loc[pokemon_pty]
@@ -69,6 +69,7 @@ def party_score(top, unit, max_workers=8, segment=100000):
 
 def main() -> None:
     party_score(top=30, unit=6)
+    party_score(top=200, unit=3)
 
 
 if __name__ == '__main__':
