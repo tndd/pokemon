@@ -1,4 +1,5 @@
 import json
+import time
 from datetime import datetime
 
 
@@ -31,8 +32,11 @@ def update_frequency(pokemons):
         raise Exception("Detects doesn't exist pokemon")
     for pokemon in pokemons:
         freq['freq'][pokemon] += 1
-    freq['hist'][datetime.now().strftime('%Y-%m-%d|%H:%M:%S')] = pokemons
+    key = datetime.now().isoformat(sep=' ', timespec='milliseconds')
+    freq['hist'][key] = pokemons
     store_frequency(freq)
+    print(f'Update | key:{key}, pokemons: {pokemons}')
+    time.sleep(0.001)
 
 
 def rollback_frequency():
@@ -47,9 +51,10 @@ def rollback_frequency():
 
 
 def main() -> None:
-    # init_frequency()
-    update_frequency(['Sprigatito', 'Iron Thorns', 'Iron Moth'])
-    # rollback_frequency()
+    init_frequency()
+    # update_frequency(['Sprigatito', 'Iron Thorns', 'Iron Moth'])
+    # update_frequency(['Sprigatito', 'Iron Thorns', 'Iron Moth'])
+    # update_frequency(['Sprigatito', 'Iron Thorns', 'Iron Moth'])
 
 
 if __name__ == '__main__':
