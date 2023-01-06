@@ -52,9 +52,16 @@ def rollback_frequency():
 
 def main() -> None:
     init_frequency()
-    # update_frequency(['Sprigatito', 'Iron Thorns', 'Iron Moth'])
-    # update_frequency(['Sprigatito', 'Iron Thorns', 'Iron Moth'])
-    # update_frequency(['Sprigatito', 'Iron Thorns', 'Iron Moth'])
+    update_frequency(['Dragapult', 'Hydreigon', 'Gholdengo', 'Dragonite', 'Meowscarada', 'Garchomp', 'Azumarill', 'Kingambit', 'Volcarona', 'Baxcalibur', 'Dondozo', 'Amoonguss', 'Hippowdon', 'Garganacl', 'Annihilape', 'Toedscruel', 'Amoonguss'])
+    update_frequency(['Dragapult', 'Hydreigon', 'Gholdengo', 'Dragonite', 'Meowscarada', 'Garchomp', 'Azumarill', 'Kingambit', 'Volcarona', 'Baxcalibur', 'Dondozo', 'Amoonguss', 'Hippowdon', 'Garganacl', 'Annihilape', 'Toedscruel', 'Amoonguss'])
+    update_frequency(['Dragapult', 'Hydreigon', 'Gholdengo', 'Dragonite', 'Meowscarada', 'Garchomp', 'Azumarill', 'Kingambit', 'Volcarona', 'Baxcalibur', 'Dondozo', 'Amoonguss', 'Hippowdon', 'Garganacl', 'Annihilape', 'Toedscruel', 'Amoonguss'])
+    update_frequency(['Dragapult', 'Hydreigon', 'Gholdengo', 'Dragonite', 'Meowscarada', 'Garchomp', 'Azumarill', 'Kingambit', 'Volcarona', 'Baxcalibur', 'Dondozo', 'Rotom/Wash Rotom', 'Skeledirge', 'Mimikyu', 'Amoonguss', 'Hippowdon', 'Garganacl', 'Clodsire', 'Annihilape', 'Toedscruel', 'Amoonguss'])
+    update_frequency(['Dragapult', 'Hydreigon', 'Gholdengo', 'Dragonite', 'Meowscarada', 'Garchomp', 'Azumarill', 'Kingambit', 'Volcarona', 'Baxcalibur', 'Dondozo', 'Rotom/Wash Rotom', 'Skeledirge', 'Mimikyu', 'Amoonguss', 'Hippowdon', 'Garganacl', 'Clodsire', 'Annihilape', 'Toedscruel', 'Amoonguss'])
+    update_frequency(['Hippowdon', 'Azumarill', 'Salamence', 'Noivern', 'Toxtricity/Amped Form', 'Scizor'])
+    update_frequency(['Grimmsnarl', 'Scizor', 'Toxtricity/Amped Form', 'Mimikyu', 'Dragonite', 'Dragapult'])
+    update_frequency(['Baxcalibur', 'Garganacl', 'Amoonguss', 'Rotom/Wash Rotom', 'Dragapult', 'Scizor'])
+    update_frequency(['Hippowdon', 'Gholdengo', 'Dragonite', 'Hydreigon', 'Azumarill', 'Skeledirge'])
+    update_frequency(['Arcanine', 'Corviknight', 'Garchomp', 'Rotom/Wash Rotom', 'Meowscarada', 'Tyranitar'])
 
 
 if __name__ == '__main__':
